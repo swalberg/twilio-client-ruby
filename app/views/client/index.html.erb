@@ -1,0 +1,47 @@
+<%= javascript_tag do %>
+function call() {
+  Twilio.Device.connect();
+}
+
+function hangup() {
+  Twilio.Device.disconnectAll();
+}
+
+
+$(function() {
+  Twilio.Device.setup("<%= twilio_token %>");
+ 
+  Twilio.Device.ready(function (device) {
+    $("#log").text("Ready");
+  });
+ 
+  Twilio.Device.error(function (error) {
+    $("#log").text("Error: " + error.message);
+  });
+
+  Twilio.Device.disconnect(function (conn) {
+    $("#log").text("Call ended");
+  });
+ 
+  Twilio.Device.connect(function (conn) {
+    $("#log").text("Successfully established call");
+  });
+
+  Twilio.Device.incoming(function (conn) {
+    $("#log").text("Incoming connection from " + conn.parameters.From);
+    // accept the incoming connection and start two-way audio
+    conn.accept();
+  });
+  
+});
+<% end %>
+<button class="call" onclick="call();">
+  Call
+</button>
+
+<button class="hangup" onclick="hangup();">
+  Hangup
+</button>
+ 
+<div id="log">Loading pigeons...</div>
+
